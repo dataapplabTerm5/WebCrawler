@@ -1,14 +1,4 @@
-__author__ = 'Lucas Ou-Yang, Mathew Sprehn'
-__date__ = 'July 4th, 2013'
-"""
-We can be suboptimal, eg: like parse w/ beautifulsoup and not use mthreading
-because Yelp will rate limit us anyways. This entire project was just for
-fun, there are better scraping solutions out there and scraping yelp is
-looked down upon anyways, read their robots.txt.
 
-Check out my main scraping project, newspaper, for news extraction!
-https://github.com/codelucas/newspaper
-"""
 from BeautifulSoup import BeautifulSoup
 from urlparse import urljoin
 import urllib2
@@ -17,6 +7,7 @@ import re
 import codecs
 import time
 import random
+import redis
 
 get_yelp_page = \
     lambda zipcode, page_num: \
@@ -231,10 +222,10 @@ def crawl_page(zipcode, page_num, verbose=False):
         if wheelchairAccessible: print 'wheelchairAccessible:', wheelchairAccessible
 
         print '=============='
-        # extracted.append((title, categories, rating, img, addr, phone, price, menu,
-        #    creditCards, parking, attire, groups, kids, reservations, delivery, takeout,
-        #    waiterService, outdoor, wifi, goodFor, alcohol, noise, ambience, tv, caters,
-        #    wheelchairAccessible))
+        extracted.append((title, categories, rating, img, addr, phone, price, menu,
+            creditCards, parking, attire, groups, kids, reservations, delivery, takeout,
+            waiterService, outdoor, wifi, goodFor, alcohol, noise, ambience, tv, caters,
+            wheelchairAccessible))
 
     return extracted, True
 
@@ -250,6 +241,8 @@ def crawl(zipcode=None):
         print '\n===== Attempting extraction for zipcode <', zipcode, '>=====\n'
         while flag:
             extracted, flag = crawl_page(zipcode, page)
+            r = redis.client.StrictRedis()
+            r.publish('data', extracted)
             if not flag:
                 print 'extraction stopped or broke at zipcode'
                 break
