@@ -46,20 +46,6 @@ And now you can begin!
 
 ::
 
-    $ python2.7 crawler.py -z 98029
+    $ python2.7 crawler.py -z 98000
 
-Feel free to send in pull requests. We need some test cases please :)
 
-This code was written when the two of us were still relatively new at python 
-so excuse the shittyness. This was open sourced just for keepsake, it's nothing
-fancy and there are definitely better scraping solutions out there.
-
-We used slower parsers like `beautifulsoup`_ and no multithreading
-because `yelp`_ would've rate limited us anyways :)
-
-By: `Lucas`_, `Mathew`_
-
-.. _`yelp`: http://www.yelp.com
-.. _`beautifulsoup`: http://www.crummy.com/software/BeautifulSoup/
-.. _`Lucas`: http://codelucas.com
-.. _`Mathew`: https://www.facebook.com/matsprehn
