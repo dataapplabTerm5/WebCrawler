@@ -78,6 +78,7 @@ def crawl_page(zipcode, page_num, verbose=False):
         tv = ''
         caters = ''
         wheelchairAccessible = ''
+        comment = ''
         try:
             img = r.div('div', {'class':'media-avatar'})[0].img['src']
         except Exception, e:
@@ -108,7 +109,10 @@ def crawl_page(zipcode, page_num, verbose=False):
             phone = r.find('div', {'class':'secondary-attributes'}).span.getText()
         except Exception, e:
             if verbose: print 'phone extract fail', str(e)
-
+        try:
+            comment = r.find('div', {'class':'media-story'}).getText()
+        except Exception, e:
+            if verbose: print 'comment extract fail', str(e)
         time.sleep(random.randint(1, 2) * .931467298)
         try:
             soup2 = BeautifulSoup(urllib2.urlopen(urljoin('http://www.yelp.com',
@@ -190,7 +194,6 @@ def crawl_page(zipcode, page_num, verbose=False):
                     {'class':'attr-WheelchairAccessible'}).getText()
             except Exception, e:
                 if verbose: print 'wheelchairAccessible extract fail', str(e)
-
         except Exception, e:
             if verbose: print "**failed to get you a page", str(e)
 
@@ -220,12 +223,13 @@ def crawl_page(zipcode, page_num, verbose=False):
         if tv: print 'tv:', tv
         if caters: print 'caters:', caters
         if wheelchairAccessible: print 'wheelchairAccessible:', wheelchairAccessible
+        if comment: print 'comment:', comment
 
         print '=============='
         extracted.append((title, categories, rating, img, addr, phone, price, menu,
             creditCards, parking, attire, groups, kids, reservations, delivery, takeout,
             waiterService, outdoor, wifi, goodFor, alcohol, noise, ambience, tv, caters,
-            wheelchairAccessible))
+            wheelchairAccessible, comment))
 
     return extracted, True
 
