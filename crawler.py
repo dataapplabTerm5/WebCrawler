@@ -11,8 +11,7 @@ import redis
 
 get_yelp_page = \
     lambda zipcode, page_num: \
-        'http://www.yelp.com/search?find_desc=&find_loc={0}' \
-        '&ns=1#cflt=restaurants&start={1}'.format(zipcode, page_num)
+        'http://www.yelp.com/search?find_loc={0}&start={1}&cflt=restaurants'.format(zipcode, page_num)
 
 ZIP_URL = "zipcodes.txt"
 FIELD_DELIM = u'###'
@@ -234,7 +233,7 @@ def crawl_page(zipcode, page_num, verbose=False):
     return extracted, True
 
 def crawl(zipcode=None):
-    page = 0
+    page = 10
     flag = True
     some_zipcodes = [zipcode] if zipcode else get_zips()
 
@@ -250,7 +249,7 @@ def crawl(zipcode=None):
             if not flag:
                 print 'extraction stopped or broke at zipcode'
                 break
-            page += 10
+            page += 30
             time.sleep(random.randint(1, 2) * .931467298)
 
 if __name__ == '__main__':
