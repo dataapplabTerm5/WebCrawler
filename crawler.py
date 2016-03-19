@@ -233,7 +233,7 @@ def crawl_page(zipcode, page_num, verbose=False):
     return extracted, True
 
 def crawl(zipcode=None):
-    page = 10
+    page = 0
     flag = True
     some_zipcodes = [zipcode] if zipcode else get_zips()
 
@@ -249,7 +249,7 @@ def crawl(zipcode=None):
             if not flag:
                 print 'extraction stopped or broke at zipcode'
                 break
-            page += 30
+            page += 10
             time.sleep(random.randint(1, 2) * .931467298)
 
 if __name__ == '__main__':
