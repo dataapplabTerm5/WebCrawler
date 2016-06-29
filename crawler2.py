@@ -1,14 +1,3 @@
-__author__ = 'Lucas Ou-Yang, Mathew Sprehn'
-__date__ = 'July 4th, 2013'
-"""
-We can be suboptimal, eg: like parse w/ beautifulsoup and not use mthreading
-because Yelp will rate limit us anyways. This entire project was just for
-fun, there are better scraping solutions out there and scraping yelp is
-looked down upon anyways, read their robots.txt.
-
-Check out my main scraping project, newspaper, for news extraction!
-https://github.com/codelucas/newspaper
-"""
 from bs4 import BeautifulSoup
 from urlparse import urljoin
 import urllib2
@@ -17,6 +6,7 @@ import re
 import codecs
 import time
 import random
+import redis
 
 get_yelp_page = \
     lambda zipcode, page_num: \
