@@ -10,9 +10,7 @@ import redis
 
 get_yelp_page = \
     lambda zipcode, page_num: \
-    	  'http://www.yelp.com/search?find_loc={0}&start={1}&cflt=restaurants'.format(zipcode, page_num)
-        # 'http://www.yelp.com/search?find_desc=&find_loc={0}' \
-        # '&ns=1#cflt=restaurants&start={1}'.format(zipcode, page_num)
+        'http://www.yelp.com/search?find_loc={0}&start={1}&cflt=restaurants'.format(zipcode, page_num)
 
 ZIP_URL = "zipcodes.txt"
 FIELD_DELIM = u'###'
@@ -39,7 +37,6 @@ def crawl_page(zipcode, page_num, verbose=False):
         return []
 
     restaurants = soup.findAll('div', {'class': 'search-result natural-search-result'})
-    #restaurants = soup.findAll('div', attrs={'class':re.compile(r'^search-result natural-search-result')})
     try:
         assert(len(restaurants) == 10)
     except AssertionError, e:
@@ -78,6 +75,7 @@ def crawl_page(zipcode, page_num, verbose=False):
         tv = ''
         caters = ''
         wheelchairAccessible = ''
+        comment = ''
         try:
             img = r.div('div', {'class':'media-avatar'})[0].img['src']
         except Exception, e:
@@ -105,11 +103,96 @@ def crawl_page(zipcode, page_num, verbose=False):
         except Exception, e:
             if verbose: print 'address extract fail', str(e)
         try:
-            phone = r.find('div', {'class':'secondary-attributes'}).find('span', {'class': 'biz-phone'}).getText()
-            #phone = r.find('div', {'class':'secondary-attributes'}).span.getText()
+            phone = r.find('div', {'class':'secondary-attributes'}).span.getText()
         except Exception, e:
             if verbose: print 'phone extract fail', str(e)
-
+        try:
+            comment = r.find('div', {'class':'media-story'}).getText()
+        except Exception, e:
+            if verbose: print 'comment extract fail', str(e)
+        time.sleep(random.randint(1, 2) * .931467298)
+        try:
+            soup2 = BeautifulSoup(urllib2.urlopen(urljoin('http://www.yelp.com',
+                                                        yelpPage)).read())
+            r2 = soup2.findAll('div', {'id':'main'})
+            try:
+                price = soup2.find('dd', {'class':'attr-RestaurantsPriceRange2'}).getText()
+            except Exception, e:
+                if verbose: print 'price extract fail', str(e)
+            try:
+                creditCards = soup2.find('dd',
+                    {'class':'attr-BusinessAcceptsCreditCards'}).getText()
+            except Exception, e:
+                if verbose: print 'creditCard extract fail', str(e)
+            try:
+                parking = soup2.find('dd', {'class':'attr-BusinessParking'}).getText()
+            except Exception, e:
+                if verbose: print 'parking extract fail', str(e)
+            try:
+                attire = soup2.find('dd', {'class':'attr-RestaurantsAttire'}).getText()
+            except Exception, e:
+                if verbose: print 'attire extract fail', str(e)
+            try:
+                groups = soup2.find('dd', {'class':'attr-RestaurantsGoodForGroups'}).getText()
+            except Exception, e:
+                if verbose: print 'groups extract fail', str(e)
+            try:
+                kids = soup2.find('dd', {'class':'attr-GoodForKids'}).getText()
+            except Exception, e:
+                if verbose: print 'kids extract fail', str(e)
+            try:
+                reservations = soup2.find('dd',
+                    {'class':'attr-RestaurantsReservations'}).getText()
+            except Exception, e:
+                if verbose: print 'reservations extract fail', str(e)
+            try:
+                delivery = soup2.find('dd', {'class':'attr-RestaurantsDelivery'}).getText()
+            except Exception, e:
+                if verbose: print 'delivery extract fail', str(e)
+            try:
+                takeout = soup2.find('dd', {'class':'attr-RestaurantsTakeOut'}).getText()
+            except Exception, e:
+                if verbose: print 'takeout extract fail', str(e)
+            try:
+                waiterService = soup2.find('dd',
+                        {'class':'attr-RestaurantsTableService'}).getText()
+            except Exception, e:
+                if verbose: print 'waiterService extract fail', str(e)
+            try:
+                outdoor = soup2.find('dd', {'class':'attr-OutdoorSeating'}).getText()
+            except Exception, e:
+                if verbose: print 'outdoor extract fail', str(e)
+            try:
+                wifi = soup2.find('dd', {'class':'attr-WiFi'}).getText()
+            except Exception, e:
+                if verbose: print 'wifi extract fail', str(e)
+            try:
+                goodFor = soup2.find('dd', {'class':'attr-GoodForMeal'}).getText()
+            except Exception, e:
+                if verbose: print 'goodFor extract fail', str(e)
+            try:
+                alcohol = soup2.find('dd', {'class':'attr-Alcohol'}).getText()
+            except Exception, e:
+                if verbose: print 'alcohol extract fail', str(e)
+            try:
+                ambience = soup2.find('dd', {'class':'attr-Ambience'}).getText()
+            except Exception, e:
+                if verbose: print 'ambience extract fail', str(e)
+            try:
+                tv = soup2.find('dd', {'class':'attr-HasTV'}).getText()
+            except Exception, e:
+                if verbose: print 'tv extract fail', str(e)
+            try:
+                caters = soup2.find('dd', {'class':'attr-Caters'}).getText()
+            except Exception, e:
+                if verbose: print 'caters extract fail', str(e)
+            try:
+                wheelchairAccessible = soup2.find('dd',
+                    {'class':'attr-WheelchairAccessible'}).getText()
+            except Exception, e:
+                if verbose: print 'wheelchairAccessible extract fail', str(e)
+        except Exception, e:
+            if verbose: print "**failed to get you a page", str(e)
 
         if title: print 'title:', title
         if categories: print 'categories:', categories
@@ -137,12 +220,13 @@ def crawl_page(zipcode, page_num, verbose=False):
         if tv: print 'tv:', tv
         if caters: print 'caters:', caters
         if wheelchairAccessible: print 'wheelchairAccessible:', wheelchairAccessible
+        if comment: print 'comment:', comment
 
         print '=============='
-        # extracted.append((title, categories, rating, img, addr, phone, price, menu,
-        #    creditCards, parking, attire, groups, kids, reservations, delivery, takeout,
-        #    waiterService, outdoor, wifi, goodFor, alcohol, noise, ambience, tv, caters,
-        #    wheelchairAccessible))
+        extracted.append((title, categories, rating, img, addr, phone, price, menu,
+            creditCards, parking, attire, groups, kids, reservations, delivery, takeout,
+            waiterService, outdoor, wifi, goodFor, alcohol, noise, ambience, tv, caters,
+            wheelchairAccessible, comment))
 
     return extracted, True
 
@@ -158,6 +242,8 @@ def crawl(zipcode=None):
         print '\n===== Attempting extraction for zipcode <', zipcode, '>=====\n'
         while flag:
             extracted, flag = crawl_page(zipcode, page)
+            r = redis.client.StrictRedis()
+            r.publish('data', extracted)
             if not flag:
                 print 'extraction stopped or broke at zipcode'
                 break
