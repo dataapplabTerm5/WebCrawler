@@ -12,7 +12,7 @@ def event_stream():
     pubsub.subscribe('data')
     for m in pubsub.listen():
         print m
-        print 'Recieved: {0}'.format(m['data'])
+        yield 'Recieved: {0}'.format(m['data'])
 
 
 @app.route('/stream')
