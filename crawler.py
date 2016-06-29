@@ -1,5 +1,4 @@
-
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 from urlparse import urljoin
 import urllib2
 import argparse
@@ -37,8 +36,7 @@ def crawl_page(zipcode, page_num, verbose=False):
         print str(e)
         return []
 
-    restaurants = soup.findAll('div', attrs={'class':re.compile
-            (r'^search-result natural-search-result')})
+    restaurants = soup.findAll('div', {'class': 'search-result natural-search-result'})
     try:
         assert(len(restaurants) == 10)
     except AssertionError, e:
@@ -251,6 +249,7 @@ def crawl(zipcode=None):
                 break
             page += 10
             time.sleep(random.randint(1, 2) * .931467298)
+    print 'total page is',page
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extracts all yelp restaurant \
